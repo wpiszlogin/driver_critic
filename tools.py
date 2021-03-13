@@ -2,7 +2,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 """
-Ornstein–Uhlenbeck process
+Noise generator that helps to explore action in DDPG.
+Values are chosen by Ornstein–Uhlenbeck algorithm.
 """
 
 
@@ -30,6 +31,7 @@ class NoiseGenerator:
     def generate(self):
         # The result is based on an old value
         # The second segment will keep values near a mean value
+        # It uses normal distribution multiplied by a standard deviation
         self.x = self.x \
                  + self.theta * (self.mean - self.x) * self.dt \
                  + self.std_dev * np.sqrt(self.dt) * np.random.normal(size=self.x_shape)
