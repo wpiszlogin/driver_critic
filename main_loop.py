@@ -13,12 +13,12 @@ from base_solution import *
 #gym.logger.set_level(40)
 
 # Parameters
-n_episodes = 5
+n_episodes = 5000
 problem = 'CarRacing-v0'
 
 # Initialize simulation
 env = gym.make(problem)
-solution = BaseSolution(env.observation_space, env.action_space)
+solution = BaseSolution(env.action_space, model_outputs=4)
 
 # Loop of episodes
 for ie in range(n_episodes):
@@ -31,8 +31,9 @@ for ie in range(n_episodes):
     while not done:
         env.render()
 
-        action = solution.get_action(state)
+        action, train_action = solution.get_action(state)
         new_state, reward, done, info = env.step(action)
 
-        solution.learn(state, action, reward, new_state)
+        # Models action output has a different shape for this problem
+        solution.learn(state, train_action, reward, new_state)
         state = new_state
