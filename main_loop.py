@@ -20,16 +20,19 @@ problem = 'CarRacing-v0'
 env = gym.make(problem)
 solution = BaseSolution(env.action_space, model_outputs=4)
 
+all_episode_reward = []
+
 # Loop of episodes
 for ie in range(n_episodes):
     # noinspection PyRedeclaration
     state = env.reset()
     solution.reset()
     done = False
+    episode_reward = 0
 
     # One-step-loop
     while not done:
-        env.render()
+        #env.render()
 
         action, train_action = solution.get_action(state)
         new_state, reward, done, info = env.step(action)
@@ -37,3 +40,7 @@ for ie in range(n_episodes):
         # Models action output has a different shape for this problem
         solution.learn(state, train_action, reward, new_state)
         state = new_state
+        episode_reward += reward
+
+    all_episode_reward.append(episode_reward)
+    print('Average results:', np.array(all_episode_reward[-10:]).mean())

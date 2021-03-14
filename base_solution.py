@@ -19,6 +19,8 @@ class BaseSolution:
         self.gamma = 0.99
         self.actor_lr = 0.001
         self.critic_lr = 0.002
+        self.tau = 0.005
+        self.noise_std = 0.2
 
         self.action_space = action_space
         # For problems that have specific outputs of an actor model
@@ -26,7 +28,7 @@ class BaseSolution:
         self.model_action_out = model_outputs if model_outputs else action_space.shape[0]
 
         self.noise = NoiseGenerator(np.full(self.model_action_out, 0.0, np.float32),
-                                    np.full((self.model_action_out,), 0.001, np.float32))
+                                    np.full((self.model_action_out,), self.noise_std, np.float32))
         # Initialize buffer R
         self.r_buffer = MemoriesRecorder(memory_capacity=40000)
 
@@ -139,8 +141,16 @@ class BaseSolution:
         # Sample mini-batch from R
         state_batch, action_batch, reward_batch, new_state_batch  = self.r_buffer.sample()
 
+        state_batch     = tf.convert_to_tensor(state_batch)
+        action_batch    = tf.convert_to_tensor(action_batch)
+        reward_batch    = tf.convert_to_tensor(reward_batch)
+        new_state_batch = tf.convert_to_tensor(new_state_batch)
+
         self.update_actor_critic(state_batch, action_batch, reward_batch, new_state_batch)
-        # TODO: Update target networks
+
+        # Update target networks
+        self.update_target_network(self.target_actor.variables, self.actor.variables)
+        self.update_target_network(self.target_critic.variables, self.critic.variables)
 
     @tf.function
     def update_actor_critic(self, state, action, reward, new_state):
@@ -162,3 +172,8 @@ class BaseSolution:
 
         actor_gradients = tape.gradient(actor_loss, self.actor.trainable_variables)
         self.actor_opt.apply_gradients(zip(actor_gradients, self.actor.trainable_variables))
+
+    @tf.function
+    def update_target_network(self, target_weights, new_weights):
+        for t, n in zip(target_weights, new_weights):
+            t.assign((1 - self.tau) * t + self.tau * n)
