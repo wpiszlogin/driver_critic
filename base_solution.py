@@ -4,6 +4,7 @@ import tensorflow as tf
 from tools import *
 from tensorflow.keras import layers
 from tensorflow.keras import Model
+from tensorflow.keras.optimizers import Adam
 
 """
 BaseSolution is class for every vision -> action problem.
@@ -14,6 +15,11 @@ It was intended to make a base class that will be a foundation for more complex 
 
 class BaseSolution:
     def __init__(self, action_space, model_outputs=None):
+        # Hyperparameters
+        self.gamma = 0.99
+        self.actor_lr = 0.001
+        self.critic_lr = 0.002
+
         self.action_space = action_space
         # For problems that have specific outputs of an actor model
         self.need_decode_out = model_outputs is not None
@@ -24,13 +30,12 @@ class BaseSolution:
         # Initialize buffer R
         self.r_buffer = MemoriesRecorder(memory_capacity=40000)
 
-        self.actor = None
-        self.critic = None
-        self.target_actor = None
-        self.target_critic = None
-
-        # Hyperparameters
-        self.gamma = 0.99
+        self.actor_opt      = Adam(self.actor_lr)
+        self.critic_opt     = Adam(self.critic_lr)
+        self.actor          = None
+        self.critic         = None
+        self.target_actor   = None
+        self.target_critic  = None
 
     def reset(self):
         self.noise.reset()
@@ -134,12 +139,26 @@ class BaseSolution:
         # Sample mini-batch from R
         state_batch, action_batch, reward_batch, new_state_batch  = self.r_buffer.sample()
 
-        # Calc y
-        y = reward_batch + self.gamma * self.target_critic([new_state_batch, self.target_actor(new_state_batch)])
-
-        # Update critic
-        critic_loss = tf.reduce_mean(tf.square(y - self.critic([state_batch, action_batch])))
-
-        # TODO: Update actor
+        self.update_actor_critic(state_batch, action_batch, reward_batch, new_state_batch)
         # TODO: Update target networks
 
+    @tf.function
+    def update_actor_critic(self, state, action, reward, new_state):
+        # Update critic
+        with tf.GradientTape() as tape:
+            # Calc y
+            new_action = self.target_actor(new_state, training=True)
+            y = reward + self.gamma * self.target_critic([new_state, new_action], training=True)
+
+            critic_loss = tf.math.reduce_mean(tf.square(y - self.critic([state, action], training=True)))
+
+        critic_gradients = tape.gradient(critic_loss, self.critic.trainable_variables)
+        self.critic_opt.apply_gradients(zip(critic_gradients, self.critic.trainable_variables))
+
+        # Update actor
+        with tf.GradientTape() as tape:
+            critic_out = self.critic([state, self.actor(state, training=True)], training=True)
+            actor_loss = -tf.math.reduce_mean(critic_out)  # Need to maximize
+
+        actor_gradients = tape.gradient(actor_loss, self.actor.trainable_variables)
+        self.actor_opt.apply_gradients(zip(actor_gradients, self.actor.trainable_variables))
