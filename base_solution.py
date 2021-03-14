@@ -17,9 +17,10 @@ class BaseSolution:
 
         self.noise = NoiseGenerator(np.full(action_space.shape, 0, np.float32),
                                     np.full(action_space.shape, 0.2, np.float32))
-        # TODO: initialize buffer R
-        # TODO: initialize critic and actor networks
-        # TODO: initialize target networks
+        # Initialize buffer R
+        self.r_buffer = MemoriesRecorder(memory_capacity=40000)
+        # TODO: Initialize critic and actor networks
+        # TODO: Initialize target networks
 
     def reset(self):
         self.noise.reset()
@@ -34,17 +35,23 @@ class BaseSolution:
         return img
 
     def get_action(self, state):
-        # TODO: result from network
-        # TODO: add noise
+        # TODO: Result from network
+        # TODO: Add noise
         # Temporary solution
         a = np.array([0.0, 1.0, 0.0])
         return a
 
     def learn(self, state, action, reward, new_state):
-        # TODO: store transition in R
-        # TODO: sample mini-batch from R
-        # TODO: calc y
-        # TODO: update critic
-        # TODO: update actor
-        # TODO: update target networks
+        # Store transition in R
+        prep_state     = self.preprocess(state)
+        prep_new_state = self.preprocess(new_state)
+        self.r_buffer.write(prep_state, action, reward, prep_new_state)
+
+        # Sample mini-batch from R
+        state_batch, action_batch, reward_batch, new_state_batch  = self.r_buffer.sample()
+
+        # TODO: Calc y
+        # TODO: Update critic
+        # TODO: Update actor
+        # TODO: Update target networks
         pass

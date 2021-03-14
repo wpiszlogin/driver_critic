@@ -9,7 +9,7 @@ import numpy as np
 from tools import *
 from base_solution import *
 
-# TODO: uncomment if there are no gym warnings
+# TODO: Uncomment if there are no gym warnings
 #gym.logger.set_level(40)
 
 # Parameters
