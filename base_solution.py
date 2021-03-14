@@ -1,7 +1,9 @@
 import numpy as np
 from docutils.nodes import topic
-
+import tensorflow as tf
 from tools import *
+from tensorflow.keras import layers
+from tensorflow.keras import Model
 
 """
 BaseSolution is class for every vision -> action problem.
@@ -19,11 +21,59 @@ class BaseSolution:
                                     np.full(action_space.shape, 0.2, np.float32))
         # Initialize buffer R
         self.r_buffer = MemoriesRecorder(memory_capacity=40000)
-        # TODO: Initialize critic and actor networks
-        # TODO: Initialize target networks
+
+        self.actor = None
+        self.critic = None
+        self.target_actor = None
+        self.target_critic = None
 
     def reset(self):
         self.noise.reset()
+
+    def build_actor(self, state_shape):
+        inputs = layers.Input(shape=state_shape)
+        x = inputs
+        x = layers.Conv2D(32, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(inputs)
+        x = layers.MaxPool2D(pool_size=(2, 2))(x)
+
+        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
+        x = layers.MaxPool2D(pool_size=(2, 2))(x)
+
+        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, strides=(2, 2), activation="relu")(x)
+        x = layers.AvgPool2D(pool_size=(2, 2))(x)
+
+        x = layers.Flatten()(x)
+        x = layers.Dense(64, activation='relu')(x)
+        last_init = tf.random_uniform_initializer(minval=-0.005, maxval=0.005)
+        y = layers.Dense(4, activation='sigmoid', kernel_initializer=last_init)(x)
+
+        model = Model(inputs=inputs, outputs=y)
+        print("Actor network:")
+        model.summary()
+        return model
+
+    def init_networks(self, state_shape):
+        self.actor = self.build_actor(state_shape)
+        # TODO: Initialize critic
+        # TODO: Initialize target networks
+
+    def get_action(self, state):
+        prep_state = self.preprocess(state)
+        if self.actor is None:
+            self.init_networks(prep_state.shape)
+
+        # Get result from a network
+        tensor_state = tf.expand_dims(tf.convert_to_tensor(prep_state), 0)
+        actor_output = self.actor(tensor_state).numpy()
+
+        # Decode output to actions
+        actor_output = actor_output[0]
+        action = np.array([actor_output[0] - actor_output[1], actor_output[2], actor_output[3]])
+
+        # Add noise and clip min-max
+        action += self.noise.generate()
+        action = np.clip(np.array(action), a_min=self.action_space.low, a_max=self.action_space.high)
+        return action
 
     def preprocess(self, img, greyscale=True):
         if greyscale:
@@ -33,13 +83,6 @@ class BaseSolution:
         # Normalize from -1. to 1.
         img = (img / img.max()) * 2 - 1
         return img
-
-    def get_action(self, state):
-        # TODO: Result from network
-        # TODO: Add noise
-        # Temporary solution
-        a = np.array([0.0, 1.0, 0.0])
-        return a
 
     def learn(self, state, action, reward, new_state):
         # Store transition in R
