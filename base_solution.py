@@ -20,7 +20,7 @@ class BaseSolution:
         self.actor_lr = 0.001
         self.critic_lr = 0.002
         self.tau = 0.005
-        self.noise_std = 0.2
+        self.noise_std = 0.4
 
         self.action_space = action_space
         # For problems that have specific outputs of an actor model
@@ -30,7 +30,7 @@ class BaseSolution:
         self.noise = NoiseGenerator(np.full(self.model_action_out, 0.0, np.float32),
                                     np.full((self.model_action_out,), self.noise_std, np.float32))
         # Initialize buffer R
-        self.r_buffer = MemoriesRecorder(memory_capacity=40000)
+        self.r_buffer = MemoriesRecorder(memory_capacity=30000)
 
         self.actor_opt      = Adam(self.actor_lr)
         self.critic_opt     = Adam(self.critic_lr)
@@ -45,19 +45,13 @@ class BaseSolution:
     def build_actor(self, state_shape, name="Actor"):
         inputs = layers.Input(shape=state_shape)
         x = inputs
-        x = layers.Conv2D(32, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(inputs)
-        x = layers.MaxPool2D(pool_size=(2, 2))(x)
-
-        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
-        x = layers.MaxPool2D(pool_size=(2, 2))(x)
-
-        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, strides=(2, 2), activation="relu")(x)
-        x = layers.AvgPool2D(pool_size=(2, 2))(x)
+        x = layers.Conv2D(16, kernel_size=(5, 5), strides=(4, 4), padding='valid', use_bias=False, activation="relu")(x)
+        x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
 
         x = layers.Flatten()(x)
         x = layers.Dense(64, activation='relu')(x)
         last_init = tf.random_uniform_initializer(minval=-0.005, maxval=0.005)
-        y = layers.Dense(self.model_action_out, activation='sigmoid', kernel_initializer=last_init)(x)
+        y = layers.Dense(self.model_action_out, activation='sigmoid')(x)
 
         model = Model(inputs=inputs, outputs=y, name=name)
         model.summary()
@@ -66,14 +60,8 @@ class BaseSolution:
     def build_critic(self, state_shape, name="Critic"):
         state_inputs = layers.Input(shape=state_shape)
         x = state_inputs
-        x = layers.Conv2D(32, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(state_inputs)
-        x = layers.MaxPool2D(pool_size=(2, 2))(x)
-
-        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
-        x = layers.MaxPool2D(pool_size=(2, 2))(x)
-
-        x = layers.Conv2D(64, kernel_size=(3, 3), padding='valid', use_bias=False, strides=(2, 2), activation="relu")(x)
-        x = layers.AvgPool2D(pool_size=(2, 2))(x)
+        x = layers.Conv2D(16, kernel_size=(5, 5), strides=(4, 4), padding='valid', use_bias=False, activation="relu")(x)
+        x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
 
         x = layers.Flatten()(x)
         action_inputs = layers.Input(shape=(self.model_action_out,))
@@ -128,8 +116,11 @@ class BaseSolution:
             img = img.mean(axis=2)
             img = np.expand_dims(img, 2)
 
-        # Normalize from -1. to 1.
-        img = (img / img.max()) * 2 - 1
+        # # Normalize from -1. to 1.
+        # img = (img / img.max()) * 2 - 1
+
+        # Scale from 0 to 1
+        img = img / img.max()
         return img
 
     def learn(self, state, train_action, reward, new_state):
@@ -144,6 +135,7 @@ class BaseSolution:
         state_batch     = tf.convert_to_tensor(state_batch)
         action_batch    = tf.convert_to_tensor(action_batch)
         reward_batch    = tf.convert_to_tensor(reward_batch)
+        reward_batch    = tf.cast(reward_batch, dtype=tf.float32)
         new_state_batch = tf.convert_to_tensor(new_state_batch)
 
         self.update_actor_critic(state_batch, action_batch, reward_batch, new_state_batch)

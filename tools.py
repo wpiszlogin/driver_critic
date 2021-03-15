@@ -50,9 +50,10 @@ class MemoriesRecorder:
         self.memory_capacity = memory_capacity
 
         # Memory will be initialized when first time used
-        self.uni_state_db = None
+        self.state_db     = None
         self.action_db    = None
         self.reward_db    = None
+        self.new_state_db = None
 
         self.writes_num = 0
 
@@ -60,12 +61,13 @@ class MemoriesRecorder:
         state_shape  = prepend_tuple(self.memory_capacity, state_shape)
         action_shape = prepend_tuple(self.memory_capacity, action_shape)
 
-        self.uni_state_db = np.zeros(state_shape, np.float32)
+        self.state_db     = np.zeros(state_shape, np.float32)
         self.action_db    = np.zeros(action_shape, np.float32)
-        self.reward_db    = np.zeros(self.memory_capacity, np.float32)
+        self.reward_db    = np.zeros((self.memory_capacity, 1), np.float32)
+        self.new_state_db = np.zeros(state_shape, np.float32)
 
     def write(self, state, action, reward, new_state):
-        if self.uni_state_db is None:
+        if self.state_db is None:
             self.init_memory(state.shape, action.shape)
 
         # Write indexes
@@ -73,29 +75,21 @@ class MemoriesRecorder:
         next_index   = (self.writes_num + 1) % self.memory_capacity
 
         # Save next state to the same array with a next index
-        self.uni_state_db[memory_index] = state
+        self.state_db[memory_index] = state
         self.action_db[memory_index]    = action
         self.reward_db[memory_index]    = reward
-        self.uni_state_db[next_index]   = new_state
+        self.new_state_db[memory_index] = new_state
 
         self.writes_num += 1
 
     def sample(self, batch_size=64):
-        all_indexes = np.arange(min(self.memory_capacity, self.writes_num))
+        indexes_range = min(self.memory_capacity, self.writes_num)
+        sampled_indexes = np.random.choice(indexes_range, batch_size)
 
-        # Writing index points to a record that is always corrupted
-        # It's better to replace it with a neighbor index
-        current_index        = self.writes_num % self.memory_capacity
-        next_current_index   = (self.writes_num + 1) % self.memory_capacity
-        all_indexes = np.where(all_indexes == current_index, next_current_index, all_indexes)
-
-        sampled_indexes = np.random.choice(all_indexes, batch_size)
-        next_indexes = (sampled_indexes + 1) % self.memory_capacity
-
-        return (self.uni_state_db[sampled_indexes],
+        return (self.state_db[sampled_indexes],
                 self.action_db[sampled_indexes],
                 self.reward_db[sampled_indexes],
-                self.uni_state_db[next_indexes])
+                self.new_state_db[sampled_indexes])
 
 
 """
