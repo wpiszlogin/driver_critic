@@ -37,5 +37,5 @@ An investigation was made to find a problem:
 * Scale reward value
 
 # Conclusion
-Probably DDPG was not the best choice for this problem. It is surprising because there are many DQN solutions, which can handle it event it uses discrete actions.
+Probably DDPG was not the best choice for this problem. It is surprising because there are many DQN solutions, which can handle it even it uses discrete actions.
 As future work, it is planned to check Proximal Policy Optimization.
