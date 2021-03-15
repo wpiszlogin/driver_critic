@@ -7,8 +7,7 @@ The solution is composed from 4 Networks:
 * Critic - evalutate an Actor
 * Target actor and Target Critic - produce target values for learning
 
-![image](https://user-images.githubusercontent.com/6407844/111140510-b2fb7a00-8582-11eb-924a-b24e18008e92.png)
-
+![image](https://user-images.githubusercontent.com/6407844/111140756-ffdf5080-8582-11eb-8372-8764c0c0e1d9.png)
 
 Reference:
 https://arxiv.org/pdf/1509.02971.pdf
