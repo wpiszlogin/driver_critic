@@ -1,4 +1,4 @@
-# driver_critic
+# driver critic
 Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm (Deep Deterministic Policy Gradient).
 
 ## Quick start
@@ -29,3 +29,9 @@ CarRacing-v0 is a sort of computer vision problem, thus a convolution network wa
 Unfortunetly it was not possible to solve CarRacing-v0 problem.
 
 An investigation was made to find a problem:
+* The solution was adapted to Pendulum-v0 environment and learned succesfully
+* Agent could learn to accelerate or brake if a reward was given for that
+* Hyperparameter search: tau, gamma, leaerning rates and parameters of noise generator
+
+# Conclusion
+Propably DDPG was not the best choise vor this problem. It is supraising, because there are many DQN solution, which can handle it event it works on discrate actions. As a future work it might to check Proximal Policy Optimization.
