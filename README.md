@@ -28,6 +28,7 @@ The first implementation of R-buffer had functionality to avoid double-write of 
 
 # Evaluation
 Unfortunately  it was not possible to solve CarRacing-v0 problem.
+It's hard to see any progress in learning. It's strange because going forward should be easy to learn and by investigation we know the model was able to learn some specific actions. Maybe a way that reward is given doesn't fit DDPG.
 
 An investigation was made to find a problem:
 * The solution was adapted to Pendulum-v0 environment and learned successfully
