@@ -17,18 +17,22 @@ class BaseSolution:
     def __init__(self, action_space, model_outputs=None):
         # Hyperparameters
         self.gamma = 0.99
-        self.actor_lr = 0.001
+        self.actor_lr = 0.00001
         self.critic_lr = 0.002
         self.tau = 0.005
-        self.noise_std = 0.4
+        self.noise_std = 0.2
 
         self.action_space = action_space
         # For problems that have specific outputs of an actor model
         self.need_decode_out = model_outputs is not None
         self.model_action_out = model_outputs if model_outputs else action_space.shape[0]
 
-        self.noise = NoiseGenerator(np.full(self.model_action_out, 0.0, np.float32),
-                                    np.full((self.model_action_out,), self.noise_std, np.float32))
+        # TODO: move it outside of class logic
+        mean = np.array([0, 0], dtype=np.float32)
+        std = np.array([self.noise_std, 4*self.noise_std], dtype=np.float32)
+        # np.full(self.model_action_out, 0.0, np.float32)
+        # np.full((self.model_action_out,), self.noise_std, np.float32)
+        self.noise = NoiseGenerator(mean, std)
         # Initialize buffer R
         self.r_buffer = MemoriesRecorder(memory_capacity=30000)
 
@@ -47,11 +51,13 @@ class BaseSolution:
         x = inputs
         x = layers.Conv2D(16, kernel_size=(5, 5), strides=(4, 4), padding='valid', use_bias=False, activation="relu")(x)
         x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
+        x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
 
         x = layers.Flatten()(x)
         x = layers.Dense(64, activation='relu')(x)
+        # TODO: Check if needed
         last_init = tf.random_uniform_initializer(minval=-0.005, maxval=0.005)
-        y = layers.Dense(self.model_action_out, activation='sigmoid')(x)
+        y = layers.Dense(self.model_action_out, activation='tanh')(x)
 
         model = Model(inputs=inputs, outputs=y, name=name)
         model.summary()
@@ -61,6 +67,7 @@ class BaseSolution:
         state_inputs = layers.Input(shape=state_shape)
         x = state_inputs
         x = layers.Conv2D(16, kernel_size=(5, 5), strides=(4, 4), padding='valid', use_bias=False, activation="relu")(x)
+        x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
         x = layers.Conv2D(32, kernel_size=(3, 3), strides=(3, 3), padding='valid', use_bias=False, activation="relu")(x)
 
         x = layers.Flatten()(x)
@@ -106,21 +113,37 @@ class BaseSolution:
 
         # Clip min-max
         env_action = np.clip(np.array(env_action), a_min=self.action_space.low, a_max=self.action_space.high)
-        return env_action, actor_output
+        return env_action/4, actor_output
 
     def decode_model_output(self, model_out):
-        return np.array([model_out[0] - model_out[1], model_out[2], model_out[3]])
+        return np.array([model_out[0], model_out[1].clip(0, 1), -model_out[1].clip(-1, 0)])
 
     def preprocess(self, img, greyscale=True):
+        # Remove numbers and enlarge speed bar
+        for i in range(88, 93+1):
+            img[i, 0:12, :] = img[i, 12, :]
+
         if greyscale:
             img = img.mean(axis=2)
             img = np.expand_dims(img, 2)
+
+        # Make car white
+        car_color = 68.0
+        car_area = img[67:77, 42:53]
+        car_area[car_area == car_color] = 255
 
         # # Normalize from -1. to 1.
         # img = (img / img.max()) * 2 - 1
 
         # Scale from 0 to 1
         img = img / img.max()
+
+        # Change brightness by speed value
+        speed_array = img[88:93+1, 12, 0]
+        speed = (speed_array.sum() / len(speed_array)) * 2 - 1
+        img += speed * 0.4
+        img = img.clip(0, 1)
+
         return img
 
     def learn(self, state, train_action, reward, new_state):
@@ -169,3 +192,15 @@ class BaseSolution:
     def update_target_network(self, target_weights, new_weights):
         for t, n in zip(target_weights, new_weights):
             t.assign((1 - self.tau) * t + self.tau * n)
+
+    def save_solution(self, path='models/'):
+        self.actor.save(path + 'actor.h5')
+        self.critic.save(path + 'critic.h5')
+        self.target_actor.save(path + 'target_actor.h5')
+        self.target_critic.save(path + 'target_critic.h5')
+
+    def load_solution(self, path='models/'):
+        self.actor = tf.keras.models.load_model(path + 'actor.h5')
+        self.critic = tf.keras.models.load_model(path + 'critic.h5')
+        self.target_actor = tf.keras.models.load_model(path + 'target_actor.h5')
+        self.target_critic = tf.keras.models.load_model(path + 'target_critic.h5')

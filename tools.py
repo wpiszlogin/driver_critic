@@ -36,6 +36,8 @@ class NoiseGenerator:
                   + self.theta * (self.mean - self.x) * self.dt
                   + self.std_dev * np.sqrt(self.dt) * np.random.normal(size=self.x_shape))
 
+        # TODO: check if needed
+        self.std_dev = self.std_dev * 0.9999
         return self.x
 
 
@@ -97,12 +99,14 @@ Helps to visualize any type of image with a colorbar.
 """
 
 
-def show_img(img):
+def show_img(img, hide_colorbar=False):
     if len(img.shape) < 3 or img.shape[2] == 1:
         plt.imshow(img, cmap='gray')
     else:
         plt.imshow(img)
-    plt.colorbar()
+
+    if not hide_colorbar:
+        plt.colorbar()
 
 
 """
