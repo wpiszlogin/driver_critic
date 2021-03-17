@@ -8,7 +8,7 @@ Values are chosen by Ornstein–Uhlenbeck algorithm.
 
 
 class NoiseGenerator:
-    def __init__(self, mean, std_dev, theta=0.3, dt=1e-2):
+    def __init__(self, mean, std_dev, theta=0.3, dt=5e-2):
         self.theta = theta
         self.dt = dt
         self.mean = mean
@@ -36,8 +36,8 @@ class NoiseGenerator:
                   + self.theta * (self.mean - self.x) * self.dt
                   + self.std_dev * np.sqrt(self.dt) * np.random.normal(size=self.x_shape))
 
-        # TODO: check if needed
-        self.std_dev = self.std_dev * 0.9999
+        # TODO: check if decaying noise helps
+        # self.std_dev = self.std_dev * 0.9999
         return self.x
 
 
