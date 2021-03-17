@@ -25,6 +25,8 @@ https://arxiv.org/pdf/1509.02971.pdf
 It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used.<br/>
 The first implementation of R-buffer had functionality to avoid double-write of state and next state. To make sure it's not a problem it was simplified.
 
+# Development...
+
 
 # Evaluation
 Unfortunately  it was not possible to solve CarRacing-v0 problem.
