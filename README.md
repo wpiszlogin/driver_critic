@@ -7,8 +7,11 @@ Dependencies:
 * Tensorflow 2.4.0
 * Matplotlib 3.3.4
 
-The current version of CarRacing-v0 has memory bugs! To solve it, we need to download the newest "car_racing.py" script from Gym GitHub.
-To run the application execute "main_loop.py" script.
+The current version of CarRacing-v0 has memory bugs. To solve it, we need to download manually the newest "car_racing.py" script from Gym GitHub.<br/>
+
+Running application:
+* Execute "main_loop.py" to train a new model. Press the SPACE key to watch a progress <br/>
+* It's possible to check the best solution by running "evaluate_loop.py".
 
 # Solution
 DDPG is composed of 4 Networks:
@@ -21,22 +24,36 @@ DDPG is composed of 4 Networks:
 Reference:
 https://arxiv.org/pdf/1509.02971.pdf
 
-It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.
-CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used. It was planned to extend the solution to transfer learning and RNN but wasn't implemented because of a deadline.
-The first implementation of R-buffer had functionality to avoid double-write of state and next state. To make sure it's not a problem it was simplified.
+It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used.<br/>
+A key component of the solution is a noise generator. This simple algorithm is responsible for exploring an environment. If generated actions don't make sense, then it will be hard to learn an agent. For example, it was important to avoid breaking and accelerating at the same time. For this reason, a network has only 2 outputs. Breaking and accelerating are in one axle. Thus using them simultaneously is prevented. A 'tanh' function was chosen as output activation, so by default model returns no actions or just a little.<br/>
+One of the most important things was to simplify the task. The car is very fast and not stable. To make it more user friendly all action was divided by 4, so acceleration, braking, and turning were much limited.<br/>
+Full training took 6h, but acceptable results can be achieved after 15 - 30 min (100 - 200 episodes).
 
-
-# Evaluation
-Unfortunately  it was not possible to solve CarRacing-v0 problem.
-It's hard to see any progress in learning. It's strange because going forward should be easy to learn and by investigation we know the model was able to learn some specific actions. Maybe a way that reward is given doesn't fit DDPG.
-
-An investigation was made to find a problem:
+# Development
+An investigation was made to solve a problem:
 * The solution was adapted to Pendulum-v0 environment and learned successfully
 * Agent could learn to accelerate or break if a reward was given for that
-* Hyperparameter search: tau, gamma, learning rates, and parameters of noise generator
+* Hyperparameter search: especially about noise generator, a few changes in learning rates
 * Different neural network architectures were tested
-* Scale reward value
+* Episode was interrupted if an agent didn't get a reward after 100 iterations
+
+It was noticed there are many DQN solutions. It's for discrete actions, but for some reason, it works better. One of the biggest challenges of the car was, that it loose control when turning and acceleration happens at the same time. In DQN case it's easy to avoid because we can define actions that exclude each other.
+
+# Preprocessing
+* Change colors to grayscale to limit computation
+* Hide numbers
+* Enlarge speed information: bigger speed bar, brightness control (when the car goes faster, then the image is getting brighten)
+* Car color is white, to make it more visible
+![image](https://user-images.githubusercontent.com/6407844/111483507-1fb67600-8735-11eb-9f63-6e665a9cbaac.png)
+
+# Evaluation
+The final solution is able to get an 802 average score. Results vary from 750 to 850 regarding track type. The controller makes sometimes errors on hairpin corners (that are most challenging). In this situation, it is able to go back on track.<br>
+There is room for development. Hyperparameters can be tuned more carefully. Also, we can implement an RNN network that should take advantage of time series data.
 
 # Conclusion
-Probably DDPG was not the best choice for this problem. It is surprising because there are many DQN solutions, which can handle it even it uses discrete actions.
-As future work, it is planned to check Proximal Policy Optimization.
+DDPG is not an easy solution but can produce acceptable results if it's configured properly. The main goal was to tune a noise generator and simplify a task by limit action.
+
+As future work, it is planned to:
+* Implement auto-tuning of hyperparameters by Bayesian-optimization
+* Use transfer learning: save to R buffer processed data from pretrained CNN network. Then build an RNN model from the map data.
+* Check Proximal Policy Optimization.
