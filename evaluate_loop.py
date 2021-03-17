@@ -23,10 +23,11 @@ env = gym.make(problem)
 env.reset()
 
 # Define custom standard deviation for noise
-# We need lest noise for steering
-noise_std = np.array([0.2, 4 * 0.2], dtype=np.float32)
-solution = BaseSolution(env.action_space, model_outputs=2, noise_std=noise_std)
-solution.load_solution('models/')
+# We can improve stability of solution, by noise parameters
+noise_mean = np.array([0.0, -0.8], dtype=np.float32)
+noise_std = np.array([0.0, 4 * 0.02], dtype=np.float32)
+solution = BaseSolution(env.action_space, model_outputs=2, noise_mean=noise_mean, noise_std=noise_std)
+solution.load_solution('models/best_solution/')
 
 
 # Loop of episodes

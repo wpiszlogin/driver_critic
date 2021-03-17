@@ -25,7 +25,7 @@ def key_release(k, mod):
 
 
 # Parameters
-n_episodes = 5000
+n_episodes = 100
 problem = 'CarRacing-v0'
 
 gym.logger.set_level(40)
@@ -41,7 +41,7 @@ env.viewer.window.on_key_release = key_release
 
 # Define custom standard deviation for noise
 # We need lest noise for steering
-noise_std = np.array([0.1, 4 * 0.1], dtype=np.float32)
+noise_std = np.array([0.1, 4 * 0.2], dtype=np.float32)
 solution = BaseSolution(env.action_space, model_outputs=2, noise_std=noise_std)
 
 
@@ -78,7 +78,7 @@ for ie in range(n_episodes):
 
     all_episode_reward.append(episode_reward)
     average_result = np.array(all_episode_reward[-10:]).mean()
-    print('Average results:', average_result)
+    print('Last result:', episode_reward, 'Average results:', average_result)
 
     if episode_reward > best_result:
         print('Saving best solution')

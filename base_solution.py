@@ -21,7 +21,7 @@ class BaseSolution:
         self.actor_lr = 0.00001
         self.critic_lr = 0.002
         self.tau = 0.005
-        self.memory_capacity = 30000
+        self.memory_capacity = 60000
 
         # For problems that have specific outputs of an actor model
         self.need_decode_out = model_outputs is not None
