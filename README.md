@@ -25,17 +25,11 @@ https://arxiv.org/pdf/1509.02971.pdf
 It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used.<br/>
 The first implementation of R-buffer had functionality to avoid double-write of state and next state. To make sure it's not a problem it was simplified.
 
-# Development...
-
-
-# Evaluation
-Unfortunately  it was not possible to solve CarRacing-v0 problem.
-It's hard to see any progress in learning. It's strange because going forward should be easy to learn and by investigation we know the model was able to learn some specific actions. Maybe a way that reward is given doesn't fit DDPG.
-
-An investigation was made to find a problem:
+# Development
+An investigation was made to solve a problem:
 * The solution was adapted to Pendulum-v0 environment and learned successfully
 * Agent could learn to accelerate or break if a reward was given for that
-* Hyperparameter search: tau, gamma, learning rates, and parameters of noise generator
+* Hyperparameter search: tau, gamma, learning rates, and parameters of noise generator. That was key 
 * Different neural network architectures were tested
 * Scale reward value
 
