@@ -7,8 +7,9 @@ Dependencies:
 * Tensorflow 2.4.0
 * Matplotlib 3.3.4
 
-The current version of CarRacing-v0 has memory bugs! To solve it, we need to download the newest "car_racing.py" script from Gym GitHub.
-To run the application execute "main_loop.py" script.
+The current version of CarRacing-v0 has memory bugs. To solve it, we need to download the newest "car_racing.py" script from Gym GitHub.<br/>
+Execute "main_loop.py" to train a new model.<br/>
+It's possible to check the best solution by running "evaluate_loop.py".
 
 # Solution
 DDPG is composed of 4 Networks:
@@ -21,7 +22,8 @@ DDPG is composed of 4 Networks:
 Reference:
 https://arxiv.org/pdf/1509.02971.pdf
 
-It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used. It was planned to extend the solution to transfer learning and RNN but wasn't implemented because of a deadline.  <br/>The first implementation of R-buffer had functionality to avoid double-write of state and next state. To make sure it's not a problem it was simplified.
+It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used.<br/>
+The first implementation of R-buffer had functionality to avoid double-write of state and next state. To make sure it's not a problem it was simplified.
 
 
 # Evaluation
@@ -36,5 +38,8 @@ An investigation was made to find a problem:
 * Scale reward value
 
 # Conclusion
-Probably DDPG was not the best choice for this problem. It is surprising because there are many DQN solutions, which can handle it even it uses discrete actions.
-As future work, it is planned to check Proximal Policy Optimization.
+DDPG is not an easy solution. The main goal was to tune a noise generator. It was noticed there are many successful DQN solutions. It's for discrete actions, but for some reason, it works better. One of the biggest challenge of the car was, that it loose control when turning and acceleration happens at the same time. In DQN case it's easy to avoid because we can define actions that exclude each other.
+
+As future work, it is planned to:
+* Use transfer learning: save to R buffer processed data from trained CNN network. Then build an RNN model from the map data.
+* Check Proximal Policy Optimization.
