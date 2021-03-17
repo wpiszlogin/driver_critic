@@ -42,9 +42,10 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 # Preprocessing
 * Change colors to grayscale to limit computation
 * Hide numbers
-* Enlarge speed information: bigger speed bar, brightness control (when the car goes faster, then the image is getting brighten)
-* Car color is white, to make it more visible
-![image](https://user-images.githubusercontent.com/6407844/111483507-1fb67600-8735-11eb-9f63-6e665a9cbaac.png)
+* Enlarge speed information: bigger speed bar
+* Road and grass has a uniform color
+* Car color is black, to make it more visible
+![image](https://user-images.githubusercontent.com/6407844/111527315-1262b100-8760-11eb-8908-10ce5b13a8a0.png)
 
 # Evaluation
 The final solution is able to get an 802 average score. Results vary from 750 to 850 regarding track type. The controller makes sometimes errors on hairpin corners (that are most challenging). In this situation, it is able to go back on track.<br>
