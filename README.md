@@ -41,20 +41,19 @@ An investigation was made to solve a problem:
 It was noticed there are many DQN solutions. It's for discrete actions, but for some reason, it works better. One of the biggest challenges of the car was, that it loose control when turning and acceleration happens at the same time. In DQN case it's easy to avoid because we can define actions that exclude each other.
 
 # Preprocessing
-* Change colors to grayscale to limit computation
 * Hide numbers
 * Enlarge speed information: bigger speed bar
 * Road and grass has a uniform color
-* Car color is black, to make it more visible
-![image](https://user-images.githubusercontent.com/6407844/111527315-1262b100-8760-11eb-8908-10ce5b13a8a0.png)
+* Scale values from 0 to 1
+![image](https://user-images.githubusercontent.com/6407844/111695445-6a1e1c80-8833-11eb-869f-1c680784b658.png)
 
 # Evaluation
 
 The final solution is able to get an 802 average score. Results vary from 750 to 850 regarding track type. The controller makes sometimes errors on hairpin corners (that are most challenging). In this situation, it is able to go back on track.<br>
 There is room for development. Hyperparameters can be tuned more carefully. Also, we can implement an RNN network that should take advantage of time series data.<br/><br/>
-<p align="center">
+
 [![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/k3FmTcVRFUM)
-</p>
+<br/>
 
 # Conclusion
 DDPG is not an easy solution but can produce acceptable results if it's configured properly. The main goal was to tune a noise generator and simplify a task by limit action.
