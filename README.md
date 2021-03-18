@@ -49,7 +49,7 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 
 # Evaluation
 
-The final solution is able to get an 802 average score. Results vary from 750 to 850 regarding track type. The controller makes sometimes errors on hairpin corners (that are most challenging). In this situation, it is able to go back on track.<br>
+The final solution is able to get an 848 average score. Generally, the results vary from 800 to 900 regarding track type. The controller sometimes is off-track on hairpin corners, which are most challenging. Usually in this situation, it is able to go back.<br>
 There is room for development. Hyperparameters can be tuned more carefully. Also, we can implement an RNN network that should take advantage of time series data.<br/><br/>
 
 [![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/k3FmTcVRFUM)
