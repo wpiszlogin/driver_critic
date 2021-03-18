@@ -49,7 +49,7 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 ![image](https://user-images.githubusercontent.com/6407844/111527315-1262b100-8760-11eb-8908-10ce5b13a8a0.png)
 
 # Evaluation
-[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/vt5fpE0bzSY)
+[![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://youtu.be/k3FmTcVRFUM)
 
 The final solution is able to get an 802 average score. Results vary from 750 to 850 regarding track type. The controller makes sometimes errors on hairpin corners (that are most challenging). In this situation, it is able to go back on track.<br>
 There is room for development. Hyperparameters can be tuned more carefully. Also, we can implement an RNN network that should take advantage of time series data.
