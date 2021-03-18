@@ -25,7 +25,7 @@ def key_release(k, mod):
 
 
 # Parameters
-n_episodes = 100
+n_episodes = 50000
 problem = 'CarRacing-v0'
 
 gym.logger.set_level(40)

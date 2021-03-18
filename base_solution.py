@@ -124,6 +124,7 @@ class BaseSolution:
         return np.array([model_out[0], model_out[1].clip(0, 1), -model_out[1].clip(-1, 0)])
 
     def preprocess(self, img, greyscale=True):
+        img = img.copy()
         # Remove numbers and enlarge speed bar
         for i in range(88, 93+1):
             img[i, 0:12, :] = img[i, 12, :]
@@ -132,10 +133,10 @@ class BaseSolution:
             img = img.mean(axis=2)
             img = np.expand_dims(img, 2)
 
-        # Make car white
+        # Make car black
         car_color = 68.0
         car_area = img[67:77, 42:53]
-        car_area[car_area == car_color] = 255
+        car_area[car_area == car_color] = 0
 
         # # Normalize from -1. to 1.
         # img = (img / img.max()) * 2 - 1
@@ -144,11 +145,21 @@ class BaseSolution:
         img = img / img.max()
 
         # Change brightness by speed value
-        speed_array = img[88:93+1, 12, 0]
-        speed = (speed_array.sum() / len(speed_array)) * 2 - 1
-        img += speed * 0.4
-        img = img.clip(0, 1)
+        # speed_array = img[88:93+1, 12, 0]
+        # speed = (speed_array.sum() / len(speed_array)) * 2 - 1
+        # img += speed * 0.4
+        # img = img.clip(0, 1)
 
+        # Unify grass color
+        img[(img > 0.533) & (img < 0.534)] = 0.56601307
+
+        # Unify track color
+        img[(img > 0.411) & (img < 0.412)] = 0.4
+        img[(img > 0.419) & (img < 0.420)] = 0.4
+
+        # Change color of kerbs
+        game_screen = img[0:83, :]
+        game_screen[game_screen == 1] = 0.80
         return img
 
     def learn(self, state, train_action, reward, new_state):
