@@ -24,7 +24,7 @@ env.reset()
 
 # Define custom standard deviation for noise
 # We can improve stability of solution, by noise parameters
-noise_mean = np.array([0.0, -0.8], dtype=np.float32)
+noise_mean = np.array([0.0, -0.83], dtype=np.float32)
 noise_std = np.array([0.0, 4 * 0.02], dtype=np.float32)
 solution = BaseSolution(env.action_space, model_outputs=2, noise_mean=noise_mean, noise_std=noise_std)
 solution.load_solution('models/best_solution/')
@@ -59,5 +59,5 @@ for ie in range(n_episodes):
             no_reward_counter = 0
 
     all_episode_reward.append(episode_reward)
-    average_result = np.array(all_episode_reward[-10:]).mean()
-    print('Average results:', average_result)
+    average_result = np.array(all_episode_reward[-100:]).mean()
+    print('Last result:', episode_reward, 'Average results:', average_result)
