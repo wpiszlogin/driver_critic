@@ -1,5 +1,5 @@
 # driver critic
-Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm (Deep Deterministic Policy Gradient).
+Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm for reinforcement learning.
 
 ## Quickstart
 Dependencies:
