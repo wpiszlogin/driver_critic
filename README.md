@@ -1,6 +1,8 @@
 # driver critic
 Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm for reinforcement learning.
-
+<br/><br/>
+[![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/_Olpk0Dt4gM)
+<br/>
 ## Quickstart
 Dependencies:
 * Gym 0.18.0
@@ -51,9 +53,6 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 
 The final solution is able to get an 848 average score. Generally, the results vary from 800 to 900 regarding track type. The agent keeps a vehicle in the track area. It has tended to stay near the right side. It's because it helps to go through the optimal racing line for left corners, which are most common on an Anti-clockwise circuit. Sometimes the controller is off-track on hairpin corners. Then it tries to go back, but not always succeed.
 There is room for development. Hyperparameters can be tuned more carefully. Also, we can implement an RNN network that should take advantage of time series data. <br/> <br/>
-
-[![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/k3FmTcVRFUM)
-<br/>
 
 # Conclusion
 DDPG is not an easy solution but can produce acceptable results if it's configured properly. The main goal was to tune a noise generator and simplify a task by limit action.
