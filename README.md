@@ -1,4 +1,4 @@
-# driver critic
+# driver critic - Deep Deterministic Policy Gradient solution
 Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm for reinforcement learning.
 <br/><br/>
 [![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/_Olpk0Dt4gM)
