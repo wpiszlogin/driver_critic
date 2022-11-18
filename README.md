@@ -22,7 +22,7 @@ DDPG is composed of 4 Networks:
 * Critic - evaluate an Actor
 * Target actor and Target Critic - produce target values for learning
 
-![actor_critic_graph](https://user-images.githubusercontent.com/6407844/202600993-00939639-e53d-4c14-a406-f3955efe44ee.png)
+![actor_critic_graph_wide](https://user-images.githubusercontent.com/6407844/202601037-2e91f314-0c1e-4fd9-8a54-2903bf508d2c.png)
 
 ![image](https://user-images.githubusercontent.com/6407844/111140756-ffdf5080-8582-11eb-8372-8764c0c0e1d9.png)
 
