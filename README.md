@@ -10,7 +10,8 @@ Dependencies:
 * Matplotlib 3.3.4
 <!---just
 !The current version of CarRacing-v0 has memory bugs. To solve it, we need to download manually the newest "car_racing.py" script from Gym GitHub.<br/>
-!https://github.com/openai/gym/blob/master/gym/envs/box2d/car_racing.py--->
+!https://github.com/openai/gym/blob/master/gym/envs/box2d/car_racing.py
+--->
 
 Running application:
 * Execute "main_loop.py" to train a new model. Press the SPACE key to watch a progress <br/>
