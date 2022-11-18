@@ -1,5 +1,5 @@
 # driver critic - Deep Deterministic Policy Gradient solution
-Solution for CarRacing-v0 environment from OpenAI Gym. It uses Convolutional layers for image processing and the DDPG algorithm for reinforcement learning.
+Solution for CarRacing-v0 environment from OpenAI Gym. It uses Convolutional Neural Network for image processing and the Reinforcement Learning algorithm.
 <br/><br/>
 [![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/_Olpk0Dt4gM)
 <br/>
@@ -51,6 +51,7 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 * Enlarge speed information: bigger speed bar
 * Road and grass has a uniform color
 * Scale values from 0 to 1
+<br/>
 ![image](https://user-images.githubusercontent.com/6407844/111695445-6a1e1c80-8833-11eb-869f-1c680784b658.png)
 
 # Evaluation
