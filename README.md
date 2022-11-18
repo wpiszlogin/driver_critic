@@ -17,6 +17,8 @@ Running application:
 * It's possible to check the best solution by running "evaluate_loop.py".
 
 # Solution
+The problem is not trivial as a car is very fast and not stable. It was hard for a human to drive without any mistakes. According to the continuous characteristics of action data, not all RF solutions could be used. Theoretically, Q-leaning could be implemented by assuming constant output values, but the precision of steering would be limited.
+
 DDPG is composed of 4 Networks:
 * Actor - play the game
 * Critic - evaluate an Actor
@@ -31,7 +33,6 @@ https://arxiv.org/pdf/1509.02971.pdf
 
 It was intended to make a base class that will be a foundation for every continuous-action task. It's easy to achieve more complex solutions, by inheriting base class.  CarRacing-v0 is a sort of computer vision problem, thus a convolution network was used.<br/>
 A key component of the solution is a noise generator. This simple algorithm is responsible for exploring an environment. If generated actions don't make sense, then it will be hard to learn an agent. For example, it was important to avoid breaking and accelerating at the same time. For this reason, a network has only 2 outputs. Breaking and accelerating are in one axle. Thus using them simultaneously is prevented. A 'tanh' function was chosen as output activation, so by default model returns no actions or just a little.<br/>
-One of the most important things was to simplify the task. The car is very fast and not stable. To make it more user friendly all action was divided by 4, so acceleration, braking, and turning were much limited.<br/>
 Full training took 6h, but acceptable results can be achieved after 15 - 30 min (100 - 200 episodes).
 
 # Development
