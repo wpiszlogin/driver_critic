@@ -49,8 +49,7 @@ It was noticed there are many DQN solutions. It's for discrete actions, but for 
 * Hide numbers
 * Enlarge speed information: bigger speed bar
 * Road and grass has a uniform color
-* Scale values from 0 to 1
-<br/>
+* Scale values from 0 to 1<br/>
 ![image](https://user-images.githubusercontent.com/6407844/111695445-6a1e1c80-8833-11eb-869f-1c680784b658.png)
 
 # Evaluation
