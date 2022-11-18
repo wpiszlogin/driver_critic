@@ -1,5 +1,5 @@
 # driver critic - Deep Deterministic Policy Gradient solution
-Solution for CarRacing-v0 environment from OpenAI Gym. It uses the DDPG algorithm for reinforcement learning.
+Solution for CarRacing-v0 environment from OpenAI Gym. It uses Convolutional layers for image processing and the DDPG algorithm for reinforcement learning.
 <br/><br/>
 [![Watch the video](https://user-images.githubusercontent.com/6407844/111694067-aea8b880-8831-11eb-90b5-0d5396a6cba7.png)](https://youtu.be/_Olpk0Dt4gM)
 <br/>
@@ -18,7 +18,7 @@ Running application:
 * It's possible to check the best solution by running "evaluate_loop.py".
 
 # Solution
-The problem is not trivial as a car is very fast and not stable. It was hard for a human to drive without any mistakes. According to the continuous characteristics of action data, not all RF solutions could be used. Theoretically, Q-leaning could be implemented by assuming constant output values, but the precision of steering would be limited. Thus DDPG was chosen.
+The environment was challenging for a player as the car is very fast and not stable. The choice of Reinforcement Learning algorithms was limited according to the continuous characteristics of action data. Theoretically, Q-leaning could be implemented by assuming constant output values but it would reduce the precision of steering. Thus DDPG (Deep Deterministic Policy Gradient solution) was chosen as it is mix of Deep Q-Network and Deterministic Policy Gradient.
 
 DDPG is composed of 4 Neural Networks:
 * Actor - play the game
