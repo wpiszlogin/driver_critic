@@ -20,7 +20,7 @@ Running application:
 # Solution
 The problem is not trivial as a car is very fast and not stable. It was hard for a human to drive without any mistakes. According to the continuous characteristics of action data, not all RF solutions could be used. Theoretically, Q-leaning could be implemented by assuming constant output values, but the precision of steering would be limited. Thus DDPG was chosen.
 
-DDPG is composed of 4 Networks:
+DDPG is composed of 4 Neural Networks:
 * Actor - play the game
 * Critic - evaluate an Actor
 * Target actor and Target Critic - produce target values for learning
